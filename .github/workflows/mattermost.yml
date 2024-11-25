@@ -1,3 +1,5 @@
+# https://github.com/marketplace/actions/mattermost
+
 on: [push, pull_request]
 
 jobs:
@@ -9,7 +11,7 @@ jobs:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MM_WEBHOOK_URL }}
           # MATTERMOST_CHANNEL: the-best-channel
           TEXT: |
-            This is a message from ${{ github.repository }}.
+            Hello from GitHub Actions! :wave:
             [Pipeline](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) was completed :white_check_mark:
-          MATTERMOST_USERNAME: ${{ github.triggering_actor }}
-          MATTERMOST_ICON_URL: https://cdn3.iconfinder.com/data/icons/system-basic-vol-4-1/20/icon-note-attention-alt3-512.png
+          MATTERMOST_USERNAME: "GitHub Actions: ${{ github.repository }}"
+          MATTERMOST_ICON_URL: https://avatars.githubusercontent.com/u/44036562?s=48&v=4
