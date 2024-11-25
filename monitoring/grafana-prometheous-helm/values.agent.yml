@@ -1,0 +1,24 @@
+# https://stackoverflow.com/q/77826751
+alertmanager:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false
+server:
+  configPath: /etc/config/prometheus.yml
+  defaultFlagsOverride:
+  - --enable-feature=agent
+  - --config.file=/etc/config/prometheus.yml
+  extraFlags:
+  - web.enable-lifecycle
+  global:
+    evaluation_interval: 30s
+    scrape_interval: 30s
+    scrape_timeout: 10s
+  remoteWrite:
+  - basic_auth:
+      password: xxxx
+      username: yyyy
+    url: https://my-external-prometheus.com/api/v1/write
+serverFiles:
+  prometheus.yml:
+    rule_files: []
