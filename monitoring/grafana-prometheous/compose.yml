@@ -1,22 +1,57 @@
+version: "3.8"
+
 services:
+  envoy:
+    image: envoyproxy/envoy:v1.32.1
+    container_name: envoy
+    ports:
+      - "80:80" # Expose Envoy on port 80
+      - "9901:9901" # Admin interface (optional)
+    volumes:
+      - ./envoy.yml:/etc/envoy/envoy.yaml
+    depends_on:
+      - prometheus
+      - grafana
+    restart: unless-stopped
+
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     container_name: prometheus
+    ports:
+      - "9090:9090" # Prometheus native port (optional)
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus # Persist Prometheus data
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - 9090:9090
-    networks:
-      - monitoring
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana-oss
+    image: grafana/grafana-oss:latest # Latest Grafana OSS image
     container_name: grafana
     ports:
-      - 3000:3000
-    networks:
-      - monitoring
+      - "3000:3000" # Grafana native port (optional)
+    volumes:
+      - grafana_data:/var/lib/grafana # Persist Grafana data
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin # Default admin username
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Default admin password
     restart: unless-stopped
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6-grafana-test.js:/scripts/k6-grafana-test.js
+    command: run /scripts/k6-grafana-test.js
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+    ports:
+      - "6565:6565"
+    depends_on:
+      - prometheus
+      - grafana
+
+volumes:
+  prometheus_data:
+  grafana_data:
