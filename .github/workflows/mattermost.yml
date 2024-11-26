@@ -1,6 +1,9 @@
 # https://github.com/marketplace/actions/mattermost
 
-on: [push, pull_request]
+name: Notify Mattermost
+
+on:
+  workflow_dispatch:
 
 jobs:
   build:
