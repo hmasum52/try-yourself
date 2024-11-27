@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  prometheus-agent:
+    image: prom/prometheus:v2.44.0 # Ensure a compatible version
+    container_name: prometheus-agent
+    command:
+      - --web.enable-lifecycle
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.agent.path=/prometheus
+      - --enable-feature=agent
+    volumes:
+      - ./prom-config.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9091:9090" # Optional, for local debugging
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
