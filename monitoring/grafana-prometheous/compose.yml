@@ -3,7 +3,7 @@ version: "3.8"
 services:
   envoy:
     image: envoyproxy/envoy:v1.32.1
-    container_name: envoy
+    container_name: monitoringj-proxy
     ports:
       - "80:80" # Expose Envoy on port 80
       - "9901:9901" # Admin interface (optional)
@@ -13,6 +13,8 @@ services:
       - prometheus
       - grafana
     restart: unless-stopped
+    networks:
+      - monitoring_network
 
   prometheus:
     image: prom/prometheus:latest
@@ -21,11 +23,25 @@ services:
       - "9090:9090" # Prometheus native port (optional)
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./web-config.yml:/etc/prometheus/web-config.yml
       - prometheus_data:/prometheus # Persist Prometheus data
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.config.file=/etc/prometheus/web-config.yml"
       - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-remote-write-receiver" # Enable remote write
     restart: unless-stopped
+    networks:
+      - monitoring_network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - monitoring_network
 
   grafana:
     image: grafana/grafana-oss:latest # Latest Grafana OSS image
@@ -38,20 +54,26 @@ services:
       - GF_SECURITY_ADMIN_USER=admin # Default admin username
       - GF_SECURITY_ADMIN_PASSWORD=admin # Default admin password
     restart: unless-stopped
+    networks:
+      - monitoring_network
 
-  k6:
-    image: grafana/k6
-    volumes:
-      - ./k6-grafana-test.js:/scripts/k6-grafana-test.js
-    command: run /scripts/k6-grafana-test.js
-    environment:
-      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
-    ports:
-      - "6565:6565"
-    depends_on:
-      - prometheus
-      - grafana
+  # k6:
+  #   image: grafana/k6
+  #   volumes:
+  #     - ./k6-grafana-test.js:/scripts/k6-grafana-test.js
+  #   command: run /scripts/k6-grafana-test.js
+  #   environment:
+  #     - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+  #   ports:
+  #     - "6565:6565"
+  #   depends_on:
+  #     - prometheus
+  #     - grafana
 
 volumes:
   prometheus_data:
   grafana_data:
+
+networks:
+  monitoring_network:
+    driver: bridge
