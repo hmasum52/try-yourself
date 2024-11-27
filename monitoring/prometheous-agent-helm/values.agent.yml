@@ -14,11 +14,15 @@ server:
     evaluation_interval: 30s
     scrape_interval: 30s
     scrape_timeout: 10s
+  persistentVolume:
+    enabled: false
   remoteWrite:
   - basic_auth:
-      password: xxxx
-      username: yyyy
-    url: https://my-external-prometheus.com/api/v1/write
+      password: promuser
+      username: prom
+    url: https://prometheus.pridesys.duckdns.org//api/v1/write
 serverFiles:
   prometheus.yml:
     rule_files: []
+
+# helm upgrade --install prometheus prometheus-community/prometheus -f values.agent.yml -n monitoring --create-namespac
