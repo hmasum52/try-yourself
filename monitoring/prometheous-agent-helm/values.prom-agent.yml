@@ -7,6 +7,7 @@ server:
   - --storage.agent.retention.max-time=30m
   - --config.file=/etc/config/prometheus.yml
   configPath: /etc/config/prometheus.yml
+  
   persistentVolume:
     enabled: false
   remoteWrite:
@@ -14,6 +15,11 @@ server:
       basic_auth:
         username: "promuser"
         password: "prom"
+      write_relabel_configs:
+        - action: replace
+          source_labels: []
+          target_label: source
+          replacement: "agent"
 
 serverFiles:
   prometheus.yml:
