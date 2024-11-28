@@ -1,0 +1,26 @@
+# https://github.com/prometheus-community/helm-charts/issues/1519
+# https://promlabs.com/blog/2022/12/15/understanding-duplicate-samples-and-out-of-order-timestamp-errors-in-prometheus/
+server:
+  enabled: true
+  defaultFlagsOverride:
+  - --enable-feature=agent
+  - --storage.agent.retention.max-time=30m
+  - --config.file=/etc/config/prometheus.yml
+  configPath: /etc/config/prometheus.yml
+  persistentVolume:
+    enabled: false
+  remoteWrite:
+    - url: "https://prometheus.pridesys.duckdns.org/api/v1/write"
+      basic_auth:
+        username: "promuser"
+        password: "prom"
+
+serverFiles:
+  prometheus.yml:
+    rule_files: []
+
+prometheus-pushgateway:
+  enabled: false
+
+alertmanager:
+  enabled: false
