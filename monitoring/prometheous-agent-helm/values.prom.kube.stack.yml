@@ -1,0 +1,32 @@
+prometheus:
+  agentMode: true
+  prometheusSpec:
+    remoteWrite:
+      - url: https://prometheus.pridesys.duckdns.org/api/v1/write
+        basicAuth:
+          username:
+            name: prometheus-extra-secret
+            key: username
+          password:
+            name: prometheus-extra-secret
+            key: password
+        writeRelabelConfigs:
+          - action: replace
+            sourceLabels: []
+            targetLabel: source
+            replacement: "agent"
+
+  extraSecret:
+    name: prometheus-extra-secret
+    data:
+      username: promuser
+      password: prom
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false
+
+defaultRules: 
+  create: false

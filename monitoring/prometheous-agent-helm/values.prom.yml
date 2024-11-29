@@ -3,14 +3,14 @@
 server:
   enabled: true
   defaultFlagsOverride:
-  - --enable-feature=agent
-  - --storage.agent.retention.max-time=30m
-  - --config.file=/etc/config/prometheus.yml
-  - --web.enable-lifecycle
-  - --enable-feature=expand-external-labels
+    - --config.file=/etc/config/prometheus.yml
+  extraFlags:
+    - web.enable-lifecycle
+    - storage.tsdb.wal-compression
   configPath: /etc/config/prometheus.yml
   persistentVolume:
-    enabled: false
+    enabled: true
+    size: 1Gi 
   remoteWrite:
     - url: "https://prometheus.pridesys.duckdns.org/api/v1/write"
       basic_auth:
