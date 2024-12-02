@@ -13,6 +13,7 @@ server:
     enabled: false
   remoteWrite:
     - url: "https://prometheus.pridesys.duckdns.org/api/v1/write"
+      protobuf_message: io.prometheus.write.v2.Request
       basic_auth:
         username: "promuser"
         password: "prom"
@@ -21,6 +22,9 @@ server:
           source_labels: []
           target_label: source
           replacement: "agent"
+        - action: drop
+          regex: expensive.*
+          source_labels: [__name__]
 
 serverFiles:
   prometheus.yml:

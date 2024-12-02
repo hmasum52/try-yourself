@@ -8,6 +8,7 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.agent.path=/prometheus
       - --enable-feature=agent
+      - --log.level=debug
     volumes:
       - ./prom-config.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus

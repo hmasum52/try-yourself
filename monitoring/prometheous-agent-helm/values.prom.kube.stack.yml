@@ -1,5 +1,6 @@
 prometheus:
-  agentMode: true
+ # agentMode: true
+  logLevel: debug
   prometheusSpec:
     remoteWrite:
       - url: https://prometheus.pridesys.duckdns.org/api/v1/write
@@ -10,11 +11,12 @@ prometheus:
           password:
             name: prometheus-extra-secret
             key: password
+        messageVersion: V2.0
         writeRelabelConfigs:
           - action: replace
             sourceLabels: []
             targetLabel: source
-            replacement: "agent"
+            replacement: "kube-agent"
 
   extraSecret:
     name: prometheus-extra-secret
@@ -26,7 +28,7 @@ alertmanager:
   enabled: false
 
 grafana:
-  enabled: false
+  enabled: true
 
-defaultRules: 
-  create: false
+# defaultRules: 
+#   create: false
