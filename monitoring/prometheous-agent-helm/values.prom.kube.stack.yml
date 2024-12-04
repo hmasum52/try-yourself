@@ -40,6 +40,9 @@ grafana:
       domain: example.com
       serve_from_sub_path: true
       root_url: "%(protocol)s://%(domain)s/grafana/"
+
+  adminUser: admin
+  adminPassword: prom-operator
   
   ingress:
     enabled: true
