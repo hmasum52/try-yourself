@@ -1,2 +1,3 @@
 values.yml
 values.kube-stack.yml
+deploy.sh

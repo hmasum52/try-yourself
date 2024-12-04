@@ -1,9 +1,10 @@
+# helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n monitoring -f values.prom.kube.stack.yml  --set grafana.grafanaIni.server.domain=pridesys-backend.duckdns.org --set "grafana.ingress.tls[0].hosts[0]=pridesys-backend.duckdns.org" 
 prometheus:
- # agentMode: true
+  # agentMode: true
   logLevel: debug
   prometheusSpec:
     remoteWrite:
-      - url: https://prometheus.pridesys.duckdns.org/api/v1/write
+      - url: https://prometheus.example.com/api/v1/write
         basicAuth:
           username:
             name: prometheus-extra-secret
@@ -27,8 +28,34 @@ prometheus:
 alertmanager:
   enabled: false
 
-grafana:
-  enabled: true
-
 # defaultRules: 
 #   create: false
+
+grafana:
+  enabled: true
+   
+  grafana.ini:
+    server:
+      # --set grafana.grafanaIni.server.domain=example.com
+      domain: example.com
+      serve_from_sub_path: true
+      root_url: "%(protocol)s://%(domain)s/grafana/"
+  
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    hosts: []
+    # Update path regex to capture the whole URL properly
+    # https://github.com/prometheus-community/helm-charts/issues/201#issuecomment-710365776
+    # https://stackoverflow.com/a/66033432
+    path: /grafana/
+    pathType: Prefix
+    
+    ## TLS configuration for Grafana Ingress
+    tls:
+      - secretName: tls-secret
+        hosts:
+          # --set grafana.ingress.tls[0].hosts[0]=example.com
+          - example.com
