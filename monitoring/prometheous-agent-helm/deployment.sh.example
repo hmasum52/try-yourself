@@ -6,5 +6,8 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
     --set "prometheus.extraSecret.data.password=prom" \
     --set "grafana.grafanaIni.server.domain=example.com" \
     --set "grafana.ingress.tls[0].hosts[0]=example.com" \
+    --set "grafana.ingress.tls[0].secretName=" \ 
     --set "grafana.adminUser=admin" \
     --set "grafana.adminPassword=admin" \
+
+# secretName is empty for whild card
