@@ -1,0 +1,28 @@
+
+
+name: Flyway Check
+
+on:
+  push:
+    branches:
+      - actions
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v3
+        - name: flyway-naming-checker
+          uses: seonghun-dev/flyway-naming-checker@v0.1.0
+          with:
+            path: 'db/flyway/migrations'
+            
+        - uses: actions/checkout@v2
+        - run: |
+            git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+        - run: |
+            git diff origin/master HEAD --name-only
+  
+
+        
