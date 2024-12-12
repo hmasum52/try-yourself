@@ -19,10 +19,13 @@ jobs:
             path: 'db/flyway/migrations'
 
         - uses: actions/checkout@v2
+          env: 
+            path: 'db/flyway/migrations'
         - run: |
             git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
         - run: |
-            flyway_changes=$(git diff origin/master HEAD --name-only | grep 'db/flyway/migrations')
+            echo "Checking Flyway migration files in path: $path\n"
+            flyway_changes=$(git diff origin/master HEAD --name-only | grep '$path')
 
             if [ -z "$flyway_changes" ]; then
                 echo "No Flyway migration files changed."
