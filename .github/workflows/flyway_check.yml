@@ -3,9 +3,9 @@
 name: Flyway Check
 
 on:
-  push:
+  pull_request:
     branches:
-      - actions
+      - master
   workflow_dispatch:
 
 jobs:
@@ -17,12 +17,21 @@ jobs:
           uses: seonghun-dev/flyway-naming-checker@v0.1.0
           with:
             path: 'db/flyway/migrations'
-            
+
         - uses: actions/checkout@v2
         - run: |
             git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
         - run: |
-            git diff origin/master HEAD --name-only
+            flyway_changes=$(git diff origin/master HEAD --name-only | grep 'db/flyway/migrations')
+
+            if [ -z "$flyway_changes" ]; then
+              echo "No Flyway migration files changed."
+            else
+              echo "Flyway migration files changed:"
+              echo "$flyway_changes"
+              echo "Please run Flyway migration locally and push the changes."
+              exit 1
+            fi
   
 
         
