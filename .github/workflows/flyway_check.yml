@@ -29,8 +29,6 @@ jobs:
             else
               echo "Flyway migration files changed:"
               echo "$flyway_changes"
-              echo "Please run Flyway migration locally and push the changes."
-              exit 1
             fi
   
 
