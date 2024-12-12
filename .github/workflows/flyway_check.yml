@@ -32,7 +32,7 @@ jobs:
             else
                 echo "Flyway migration files changed:"
                 echo "$flyway_changes \n"
-                changes=$(git diff origin/master HEAD --compact-summary | grep 'db/flyway/migrations')
+                changes=$(git diff origin/master HEAD --compact-summary | grep "$path")
 
                 # check if there a change is old migrations file
                 if [ -z "$(echo "$changes" | grep '-')" ]; then
@@ -52,7 +52,7 @@ jobs:
                 fi
 
                 new_version=$(echo "$flyway_changes" | grep '.[0-9]' -o | sort | head -n 1 | grep '[0-9]' -o)
-                last_migration_version=$(git ls-tree origin/master -r --name-only | grep 'db/flyway/migrations' | grep '.[0-9]' -o | sort -r | head -n 1 | grep '[0-9]' -o)
+                last_migration_version=$(git ls-tree origin/master -r --name-only | grep "$path" | grep '.[0-9]' -o | sort -r | head -n 1 | grep '[0-9]' -o)
 
                 if [ -z "$last_migration_version" ]; then
                     echo "No old migrations file found.\n"
