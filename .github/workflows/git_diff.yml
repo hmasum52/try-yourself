@@ -3,9 +3,6 @@
 name: Git Diff
 
 on:
-  push:
-    branches:
-      - actions
   workflow_dispatch:
 
 jobs:
