@@ -3,6 +3,9 @@
 name: Git Diff
 
 on:
+  push:
+    branches:
+      - actions
   workflow_dispatch:
 
 jobs:
@@ -12,4 +15,5 @@ jobs:
         - uses: actions/checkout@v2
         - run: |
             git diff origin/master --name-only
+            echo "::set-output name=diff::$(git diff origin/master --name-only)"
   
