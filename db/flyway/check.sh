@@ -17,15 +17,15 @@ else
         exit 1
     fi
 
-    new_versions=$(echo "$flyway_changes" | grep '.[0-9]' -o)
+    new_versions=$(echo "$flyway_changes" | grep 'V[0-9]*__' -o)
     # check if there is more than one new migration file
     if [ "$(echo "$new_versions" | wc -l)" -gt 1 ]; then
         echo "More than one new migration file found. Only one new migration file is allowed.\n"
         exit 1
     fi
 
-    new_version=$(echo "$flyway_changes" | grep '.[0-9]' -o | sort | head -n 1 | grep '[0-9]' -o)
-    last_migration_version=$(git ls-tree origin/master -r --name-only | grep 'migrations' | grep '.[0-9]' -o | sort -r | head -n 1 | grep '[0-9]' -o)
+    new_version=$(echo "$flyway_changes" | grep 'V[0-9]*__' -o | sort -V | head -n 1 | grep '[0-9]*' -o)
+    last_migration_version=$(git ls-tree origin/master -r --name-only | grep 'migrations' | grep 'V[0-9]*__' -o | sort -r -V | head -n 1 | grep '[0-9]*' -o)
 
     if [ -z "$last_migration_version" ]; then
         echo "No old migrations file found.\n"
