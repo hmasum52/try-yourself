@@ -3,3 +3,5 @@ CREATE TABLE person (
     name VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
+
+INSERT INTO person (name) VALUES ('John Doe');
