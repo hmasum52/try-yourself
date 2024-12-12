@@ -9,17 +9,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          git diff origin/main --name-only
-        
-
-      # - uses: mattermost/action-mattermost-notify@master
-      #   with:
-      #     MATTERMOST_WEBHOOK_URL: ${{ secrets.MM_WEBHOOK_URL }}
-      #     # MATTERMOST_CHANNEL: the-best-channel
-      #     TEXT: |
-      #       Hello from GitHub Actions! :wave:
-      #       [Pipeline](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) was completed :white_check_mark:
-      #     MATTERMOST_USERNAME: "GitHub Actions: ${{ github.repository }}"
-      #     MATTERMOST_ICON_URL: https://avatars.githubusercontent.com/u/44036562?s=48&v=4
+      - uses: mattermost/action-mattermost-notify@master
+        with:
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MM_WEBHOOK_URL }}
+          # MATTERMOST_CHANNEL: the-best-channel
+          TEXT: |
+            Hello from GitHub Actions! :wave:
+            [Pipeline](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) was completed :white_check_mark:
+          MATTERMOST_USERNAME: "GitHub Actions: ${{ github.repository }}"
+          MATTERMOST_ICON_URL: https://avatars.githubusercontent.com/u/44036562?s=48&v=4
