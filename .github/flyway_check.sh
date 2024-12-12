@@ -1,8 +1,19 @@
 ## change directory to the root of the project
 cd "$(git rev-parse --show-toplevel)"
 merge_migrations=false
-
 path="db/flyway/migrations"
+
+while getopts "m:p:" opt; do
+    case $opt in
+        m) merge_migrations=$OPTARG ;;
+        p) path=$OPTARG ;;
+        \?) echo "Invalid option -$OPTARG" >&2; exit 1 ;;
+    esac
+done
+
+if [ "$merge_migrations" = true ]; then
+    echo "Merge migrations mode is enabled.\n"
+fi
 
 flyway_changes=$(git diff origin/master HEAD --name-only | grep "$path")
 
