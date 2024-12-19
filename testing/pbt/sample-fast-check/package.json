@@ -1,0 +1,16 @@
+{
+  "name": "sample-fast-check",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "script"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "fast-check": "^3.23.2",
+    "mocha": "^11.0.1"
+  }
+}
