@@ -35,92 +35,94 @@ embedding_model_dim: 768
 timeout: 120
 recreate_index: true
 
+# https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
 ---
 type: pipeline
 pipes:
   - name: db_schema_indexing
-    embedder: openai_embedder.text-embedding-3-large
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: historical_question_indexing
-    embedder: openai_embedder.text-embedding-3-large
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: table_description_indexing
-    embedder: openai_embedder.text-embedding-3-large
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: db_schema_retrieval
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-    embedder: openai_embedder.text-embedding-3-large
+    llm: litellm_llm.lm_studio/llama3.2-latest
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: historical_question_retrieval
-    embedder: openai_embedder.text-embedding-3-large
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: sql_generation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: sql_correction
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: followup_sql_generation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: sql_summary
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: sql_answer
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: sql_breakdown
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: sql_expansion
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: sql_explanation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: sql_regeneration
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: semantics_description
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: relationship_recommendation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: question_recommendation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: question_recommendation_db_schema_retrieval
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-    embedder: openai_embedder.text-embedding-3-large
+    llm: litellm_llm.lm_studio/llama3.2-latest
+    embedder: ollama_embedder.nomic-embed-text
     document_store: qdrant
   - name: question_recommendation_sql_generation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-    engine: wren_ui
-  - name: intent_classification
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-    embedder: openai_embedder.text-embedding-3-large
-    document_store: qdrant
-  - name: data_assistance
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-  - name: sql_pairs_indexing
-    document_store: qdrant
-    embedder: openai_embedder.text-embedding-3-large
-  - name: sql_pairs_deletion
-    document_store: qdrant
-    embedder: openai_embedder.text-embedding-3-large 
-  - name: sql_pairs_retrieval
-    document_store: qdrant
-    embedder: openai_embedder.text-embedding-3-large
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-  - name: preprocess_sql_data
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
-  - name: sql_executor
+    llm: litellm_llm.lm_studio/llama3.2-latest
     engine: wren_ui
   - name: chart_generation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: chart_adjustment
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
+  - name: intent_classification
+    llm: litellm_llm.lm_studio/llama3.2-latest
+    embedder: ollama_embedder.nomic-embed-text
+    document_store: qdrant
+  - name: data_assistance
+    llm: litellm_llm.lm_studio/llama3.2-latest
+  - name: sql_pairs_indexing
+    document_store: qdrant
+    embedder: ollama_embedder.nomic-embed-text
+  - name: sql_pairs_deletion
+    document_store: qdrant
+    embedder: ollama_embedder.nomic-embed-text 
+  - name: sql_pairs_retrieval
+    document_store: qdrant
+    embedder: ollama_embedder.nomic-embed-text
+    llm: litellm_llm.lm_studio/llama3.2-latest
+  - name: preprocess_sql_data
+    llm: litellm_llm.lm_studio/llama3.2-latest
+  - name: sql_executor
+    engine: wren_ui
   - name: sql_question_generation
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
   - name: sql_generation_reasoning
-    llm: litellm_llm.gpt-4o-mini-2024-07-18
+    llm: litellm_llm.lm_studio/llama3.2-latest
+
 
 ---
 settings:
