@@ -1,0 +1,9 @@
+{
+  "mappers": [
+      {
+          "name": "Token-Mapper",
+          "fileName": "tokenmapper.js",
+          "description": "Create token mapper"
+      }
+  ]
+}
