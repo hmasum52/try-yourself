@@ -22,10 +22,19 @@ for (var client in token.getResourceAccess()) {
 token.setResourceAccess(null);
 
 // https://gist.github.com/webdeb/d8a99df9023f01b78e3e8ff580abe10b
-debugOutput("Token releam access", token.getRealmAccess());
-token.setOtherClaims("custom-claim", roles);
+debugOutput("Token releam access" + token.getRealmAccess());
+token.setOtherClaims("p", roles);
 
 
-var roles = [];
+// https://www.keycloak.org/docs-api/22.0.5/javadocs/org/keycloak/models/RoleModel.html
+var roleMappings= user.getRoleMappingsStream().toArray();
 
-debugOutput("Roles: " + roles);
+// Iterate through roles
+for (var i = 0; i < roleMappings.length; i++) {
+  var role = roleMappings[i];
+  debugOutput(role)
+  var roleName = role.getName();
+  debugOutput("role "+roleName)
+}
+
+// debugOutput("realm roles" + realmRoleNames)

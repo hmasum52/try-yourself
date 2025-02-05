@@ -15,8 +15,8 @@ services:
       - KC_DB_PASSWORD=keycloak
       - KC_FEATURES=scripts
     command: start-dev
-    volumes:
-      - ./custom-mapper.jar:/opt/keycloak/providers/custom-mapper.jar
+    # volumes:
+    #   - ./custom-mapper.jar:/opt/keycloak/providers/custom-mapper.jar
 
   db:
     container_name: keycloak-db
