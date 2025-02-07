@@ -12,7 +12,6 @@ public class HuffmanCompressionTest {
 //       testNo++;
 //       // System.out.println("Input: \"" + input + "\"");
 //       System.out.println("Input length: " + input.length() + " characters");
-      
 //       try {
 //           HuffmanCompression.EncodingResult encodingResult = HuffmanCompression.huffmanEncode(input);
 //           HuffmanCompression.BinaryResult binaryResult = HuffmanCompression.encodeBinaryToBytes(encodingResult.encodedText);
