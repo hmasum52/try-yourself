@@ -1,0 +1,82 @@
+- name: Clean up existing Kubernetes installation
+  hosts: k8s_cluster
+  become: yes
+  tasks:
+    - name: Reset kubeadm (ignore errors if not initialized)
+      shell: kubeadm reset --force
+      ignore_errors: yes
+
+    - name: Stop kubelet service
+      systemd:
+        name: kubelet
+        state: stopped
+      ignore_errors: yes
+
+    - name: Stop containerd service
+      systemd:
+        name: containerd
+        state: stopped
+      ignore_errors: yes
+
+    - name: Remove Kubernetes config files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/kubernetes
+        - /var/lib/kubelet
+        - /var/lib/etcd
+        - /home/masum/.kube
+        - /root/.kube
+      ignore_errors: yes
+
+    - name: Remove CNI network config
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/cni/net.d
+        - /opt/cni/bin
+      ignore_errors: yes
+
+    - name: Clean iptables rules
+      shell: |
+        iptables -F
+        iptables -t nat -F
+        iptables -t mangle -F
+        iptables -X
+      ignore_errors: yes
+
+    - name: Remove bridge networks
+      shell: |
+        ip link delete cni0 2>/dev/null || true
+        ip link delete flannel.1 2>/dev/null || true
+        ip link delete docker0 2>/dev/null || true
+      ignore_errors: yes
+
+    - name: Restart containerd service
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Restart kubelet service
+      systemd:
+        name: kubelet
+        state: restarted
+        enabled: yes
+
+    - name: Clean up temporary files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/join-command
+        - /tmp/kube-config
+        - /tmp/kubernetes-release.key
+        - /tmp/docker.asc
+      ignore_errors: yes
+
+    - name: Display cleanup completion
+      debug:
+        msg: "Kubernetes cleanup completed on {{ inventory_hostname }}"

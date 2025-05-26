@@ -1,0 +1,44 @@
+- name: Setup Kubernetes Workers
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Copy join command to worker
+      copy:
+        src: ./join-command
+        dest: /tmp/join-command
+        mode: '0755'
+
+    - name: Join Kubernetes cluster
+      shell: bash /tmp/join-command
+      register: join_result
+      ignore_errors: yes
+
+    - name: Create .kube directory for user
+      file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Create .kube directory for root
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '0755'
+
+    - name: Copy kubeconfig to worker user home
+      copy:
+        src: ./kube-config
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Copy kubeconfig to worker root
+      copy:
+        src: ./kube-config
+        dest: /root/.kube/config
+        owner: root
+        group: root
+        mode: '0644'

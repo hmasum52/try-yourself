@@ -1,0 +1,100 @@
+- name: ===Setup Kubernetes Master===
+  hosts: masters
+  become: yes
+  tasks:
+    - name: Initialize Kubernetes cluster
+      shell: |
+        public_ip=$(curl ifconfig.me && echo "")
+        private_ip=$(hostname -i)
+        kubeadm init \
+          --pod-network-cidr=10.244.0.0/16 \
+          --apiserver-advertise-address=${private_ip} \
+          --apiserver-cert-extra-sans=${public_ip} \
+          --control-plane-endpoint=${public_ip} \
+          --kubernetes-version=v1.32.0 \
+          --node-name=master
+      register: kubeadm_init
+      ignore_errors: yes
+
+    - name: Create .kube directory
+      file:
+        path: /home/masum/.kube
+        state: directory
+        mode: '0755'
+        owner: masum
+        group: masum
+
+    - name: Create .kube directory for root
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '0755'
+
+    - name: Copy kubeconfig
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/masum/.kube/config
+        remote_src: yes
+        owner: masum
+        group: masum
+
+    - name: Copy kubeconfig to root for system operations
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+        owner: root
+        group: root
+
+    - name: Install Flannel networking
+      shell: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+      environment:
+        KUBECONFIG: /root/.kube/config
+    
+    - name: Insatll Metrics Server
+      shell: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+      environment:
+        KUBECONFIG: /root/.kube/config
+
+    - name: Patch metrics server to allow insecure TLS
+      shell: |
+        kubectl patch deployment metrics-server -n kube-system --type='json' -p='[
+          {
+            "op": "add",
+            "path": "/spec/template/spec/containers/0/args/-",
+            "value": "--kubelet-insecure-tls"
+          }
+        ]'
+      environment:
+        KUBECONFIG: /root/.kube/config
+
+
+    - name: Generate join command
+      shell: kubeadm token create --print-join-command
+      register: join_command
+      environment:
+        KUBECONFIG: /root/.kube/config
+
+    - name: Save join command to file
+      copy:
+        content: "{{ join_command.stdout }}"
+        dest: /tmp/join-command
+        mode: '0644'
+
+    - name: Copy kubeconfig to /home/masum for convenience
+      copy:
+        src: /home/masum/.kube/config
+        dest: /tmp/kube-config
+        remote_src: yes
+
+    - name: Fetch join command to local
+      fetch:
+        src: /tmp/join-command
+        dest: ./join-command
+        flat: yes
+
+    - name: Fetch kubeconfig to local
+      fetch:
+        src: /tmp/kube-config
+        dest: ./kube-config
+        flat: yes
